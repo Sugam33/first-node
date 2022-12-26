@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import  mongoose  from "mongoose";
 import bodyParser from "body-parser";
+import User from "./model/users.js";
 
 dotenv.config();
 const app = express();
@@ -13,6 +14,20 @@ app.get("/",(req,res) => {
 app.post("/test", (req,res) => {
     console.log(req.body, "test")
     res.status(200).send(req.body)
+});
+
+app.post("/api/users", async (req, res) => {
+  console.log(req.body);
+  const { fullName, email, password, ...rest } = req.body;
+    try{
+     const user = await User.create({ fullName, email, password, ...rest});
+     console.log(user);
+     res.send({ status : "User created!", user });
+    }
+    catch(err){
+      console.log(err)
+      res.send({ status: "error creating user!" });
+    }
 });
 
 (async () => {
