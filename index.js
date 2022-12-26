@@ -28,6 +28,18 @@ app.post("/api/users", async (req, res) => {
       console.log(err)
       res.send({ status: "error creating user!" });
     }
+
+    app.get("/api/users", async(req,res) => {
+      try{
+        const users = await User.find({});
+        console.log(users);
+        res.send({ status: "User Listed!", users });
+      } catch(err){
+        console.log(err, ">>>> error");
+        res.send({status: "error getting users!"});
+      }
+    });
+    
 });
 
 (async () => {
