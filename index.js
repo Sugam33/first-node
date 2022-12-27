@@ -4,7 +4,7 @@ import  mongoose  from "mongoose";
 import bodyParser from "body-parser";
 import User from "./model/users.js";
 import Product from "./model/product.js";
-import { registerUser } from "./controllers/usersController.js";
+import { createUser, deleteUsers, getUsers, registerUser } from "./controllers/usersController.js";
 
 dotenv.config();
 const app = express();
@@ -18,56 +18,13 @@ app.post("/test", (req,res) => {
     res.status(200).send(req.body)
 });
 
-app.post("/api/users", async (req, res) => {
-  console.log(req.body);
-  const { fullName, email, password, ...rest } = req.body;
-    try{
-     const user = await User.create({ fullName, email, password, ...rest});
-     console.log(user);
-     res.send({ status : "User created!", user });
-    }
-    catch(err){
-      console.log(err)
-      res.send({ status: "error creating user!" });
-    }
-  });
+app.post("/api/users", registerUser);
 
-    app.get("/api/users", async(req,res) => {
-      try{
-        const users = await User.find({});
-        console.log(users);
-        res.send({ status: "User Listed!", users });
-      } catch(err){
-        console.log(err, ">>>> error");
-        res.send({status: "error getting users!"});
-      }
-    });
+app.get("/api/users", createUser);
     
-    app.get("/api/users/:id", async(req,res) => {
-      const id = req.params.id;
-      console.log(req.params, id);
-      try{
-        const user = await User.findById(id);
-        console.log(user);
-        res.send({ status: "User data retrieved!", user});
-      } catch(err){
-        console.log(err, ">>>>>> error");
-        res.send({ status: "error getting user data!" });
-      }
-    });
+app.get("/api/users/:id", getUsers);
 
-    app.delete("/api/users/:id", async(req, res) => {
-      const id = req.params.id;
-      console.log(req.params, id);
-      try{
-        const user = await User.findOneAndDelete({_id : id});
-        console.user(user);
-        res.send({ status: "User Deleted!", user});
-      } catch(err){
-        console.log(err, ">>>>> error")
-        res.send({ status: "error deleting user data!"});
-      }
-    });
+app.delete("/api/users/:id", deleteUsers);
 
     // app.post("/login", async(req, res) => {
     //   const { email, password } = req.body;
