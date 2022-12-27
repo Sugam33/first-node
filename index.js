@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import  mongoose  from "mongoose";
 import bodyParser from "body-parser";
 import User from "./model/users.js";
+import Product from "./model/product.js";
+import { registerUser } from "./controllers/usersController.js";
 
 dotenv.config();
 const app = express();
@@ -28,6 +30,7 @@ app.post("/api/users", async (req, res) => {
       console.log(err)
       res.send({ status: "error creating user!" });
     }
+  });
 
     app.get("/api/users", async(req,res) => {
       try{
@@ -40,7 +43,94 @@ app.post("/api/users", async (req, res) => {
       }
     });
     
-});
+    app.get("/api/users/:id", async(req,res) => {
+      const id = req.params.id;
+      console.log(req.params, id);
+      try{
+        const user = await User.findById(id);
+        console.log(user);
+        res.send({ status: "User data retrieved!", user});
+      } catch(err){
+        console.log(err, ">>>>>> error");
+        res.send({ status: "error getting user data!" });
+      }
+    });
+
+    app.delete("/api/users/:id", async(req, res) => {
+      const id = req.params.id;
+      console.log(req.params, id);
+      try{
+        const user = await User.findOneAndDelete({_id : id});
+        console.user(user);
+        res.send({ status: "User Deleted!", user});
+      } catch(err){
+        console.log(err, ">>>>> error")
+        res.send({ status: "error deleting user data!"});
+      }
+    });
+
+    // app.post("/login", async(req, res) => {
+    //   const { email, password } = req.body;
+    //   try{
+    //     const user = User.find
+    //   } catch(err){} 
+    // });
+    
+
+// products
+
+app.post("/api/product", async (req, res) => {
+  console.log(req.body);
+  const { productName, productBrand, productPrice, supplierName, ...rest } = req.body;
+    try{
+     const product = await Product.create({ productName, productBrand, productPrice, supplierName, ...rest});
+     console.log(product);
+     res.send({ status : "Product created!", product });
+    }
+    catch(err){
+      console.log(err)
+      res.send({ status: "error creating product!", err });
+    }
+  });
+
+    app.get("/api/product", async(req,res) => {
+      try{
+        const products = await Product.find({});
+        console.log(products);
+        res.send({ status: "Product Listed!", products });
+      } catch(err){
+        console.log(err, ">>>> error");
+        res.send({status: "error getting products!"});
+      }
+    });
+    
+    app.get("/api/product/:id", async(req,res) => {
+      const id = req.params.id;
+      console.log(req.params, id);
+      try{
+        const product = await Product.findById(id);
+        console.log(product);
+        res.send({ status: "product data retrieved!", product});
+      } catch(err){
+        console.log(err, ">>>>>> error");
+        res.send({ status: "error getting product data!" });
+      }
+    });
+
+    app.delete("/api/product/:id", async(req, res) => {
+      const id = req.params.id;
+      console.log(req.params, id);
+      try{
+        const product = await Product.findOneAndDelete({_id : id});
+        console.user(product);
+        res.send({ status: "Product Deleted!", product});
+      } catch(err){
+        console.log(err, ">>>>> error")
+        res.send({ status: "error deleting product data!"});
+      }
+    });
+    
+
 
 (async () => {
     try {
