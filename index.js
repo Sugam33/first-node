@@ -5,6 +5,8 @@ import bodyParser from "body-parser";
 import User from "./model/users.js";
 import Product from "./model/product.js";
 import { createUser, deleteUsers, getUsers, registerUser } from "./controllers/usersController.js";
+import userRouter from "./routers/userRouter.js";
+import { createProduct, deleteProduct, findProduct, listProducts } from "./controllers/productsController.js";
 
 dotenv.config();
 const app = express();
@@ -19,12 +21,11 @@ app.post("/test", (req,res) => {
 });
 
 app.post("/api/users", registerUser);
-
 app.get("/api/users", createUser);
-    
 app.get("/api/users/:id", getUsers);
-
 app.delete("/api/users/:id", deleteUsers);
+
+app.use("/api/users", userRouter)
 
     // app.post("/login", async(req, res) => {
     //   const { email, password } = req.body;
@@ -36,57 +37,62 @@ app.delete("/api/users/:id", deleteUsers);
 
 // products
 
-app.post("/api/product", async (req, res) => {
-  console.log(req.body);
-  const { productName, productBrand, productPrice, supplierName, ...rest } = req.body;
-    try{
-     const product = await Product.create({ productName, productBrand, productPrice, supplierName, ...rest});
-     console.log(product);
-     res.send({ status : "Product created!", product });
-    }
-    catch(err){
-      console.log(err)
-      res.send({ status: "error creating product!", err });
-    }
-  });
+// app.post("/api/product", async (req, res) => {
+//   console.log(req.body);
+//   const { productName, productBrand, productPrice, supplierName, ...rest } = req.body;
+//     try{
+//      const product = await Product.create({ productName, productBrand, productPrice, supplierName, ...rest});
+//      console.log(product);
+//      res.send({ status : "Product created!", product });
+//     }
+//     catch(err){
+//       console.log(err)
+//       res.send({ status: "error creating product!", err });
+//     }
+//   });
 
-    app.get("/api/product", async(req,res) => {
-      try{
-        const products = await Product.find({});
-        console.log(products);
-        res.send({ status: "Product Listed!", products });
-      } catch(err){
-        console.log(err, ">>>> error");
-        res.send({status: "error getting products!"});
-      }
-    });
+//     app.get("/api/product", async(req,res) => {
+//       try{
+//         const products = await Product.find({});
+//         console.log(products);
+//         res.send({ status: "Product Listed!", products });
+//       } catch(err){
+//         console.log(err, ">>>> error");
+//         res.send({status: "error getting products!"});
+//       }
+//     });
     
-    app.get("/api/product/:id", async(req,res) => {
-      const id = req.params.id;
-      console.log(req.params, id);
-      try{
-        const product = await Product.findById(id);
-        console.log(product);
-        res.send({ status: "product data retrieved!", product});
-      } catch(err){
-        console.log(err, ">>>>>> error");
-        res.send({ status: "error getting product data!" });
-      }
-    });
+//     app.get("/api/product/:id", async(req,res) => {
+//       const id = req.params.id;
+//       console.log(req.params, id);
+//       try{
+//         const product = await Product.findById(id);
+//         console.log(product);
+//         res.send({ status: "product data retrieved!", product});
+//       } catch(err){
+//         console.log(err, ">>>>>> error");
+//         res.send({ status: "error getting product data!" });
+//       }
+//     });
 
-    app.delete("/api/product/:id", async(req, res) => {
-      const id = req.params.id;
-      console.log(req.params, id);
-      try{
-        const product = await Product.findOneAndDelete({_id : id});
-        console.user(product);
-        res.send({ status: "Product Deleted!", product});
-      } catch(err){
-        console.log(err, ">>>>> error")
-        res.send({ status: "error deleting product data!"});
-      }
-    });
-    
+//     app.delete("/api/product/:id", async(req, res) => {
+//       const id = req.params.id;
+//       console.log(req.params, id);
+//       try{
+//         const product = await Product.findOneAndDelete({_id : id});
+//         console.log(product);
+//         res.send({ status: "Product Deleted!", product});
+//       } catch(err){
+//         console.log(err, ">>>>> error");
+//         res.send({ status: "error deleting product data!"});
+//       }
+//     });
+     
+app.post("/api/product", createProduct);
+app.get("/api/product", listProducts);
+app.get("/api/product/:id", findProduct);
+app.delete("/api/product/:id", deleteProduct);
+
 
 
 (async () => {
