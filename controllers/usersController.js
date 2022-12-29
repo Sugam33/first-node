@@ -45,10 +45,10 @@ export const registerUser = expressAsyncHandler(async (req, res) => {
             console.log(req.params, id);
             try{
               const user = await User.findOneAndDelete({_id : id});
-              console.user(user);
+              console.log(user);
               res.send({ status: "User Deleted!", user});
             } catch(err){
-              console.log(err, ">>>>> error")
+              console.log(err, ">>>>> error");
               res.send({ status: "error deleting user data!"});
             }
           });
